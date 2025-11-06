@@ -7,15 +7,6 @@
     "start": "node server.js",
     "postinstall": "npm rebuild sqlite3"
   },
-  "keywords": [
-    "forum",
-    "anonimowe",
-    "express",
-    "sqlite",
-    "railway"
-  ],
-  "author": "TwojeImie",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "express-session": "^1.17.3",
