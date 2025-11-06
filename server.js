@@ -5,7 +5,9 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+
+// używamy portu z Railway albo lokalnego 3000
+const PORT = process.env.PORT || 3000;
 
 // konfiguracja sesji
 app.use(session({
@@ -17,6 +19,7 @@ app.use(session({
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// połączenie z bazą SQLite
 const db = new sqlite3.Database('./data.sqlite');
 
 // ===== ROUTES =====
@@ -69,6 +72,5 @@ app.post('/api/logout', (req, res) => {
   req.session.destroy(() => res.json({ success: true }));
 });
 
-app.listen(PORT, () => console.log(`Serwer działa na http://localhost:${PORT}`));
-const PORT = process.env.PORT || 3000;
+// start serwera
 app.listen(PORT, () => console.log(`Serwer działa na porcie ${PORT}`));
