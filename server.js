@@ -70,3 +70,5 @@ app.post('/api/logout', (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Serwer działa na http://localhost:${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Serwer działa na porcie ${PORT}`));
