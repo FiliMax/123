@@ -6,7 +6,6 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // ===== MIDDLEWARE =====
 app.use(bodyParser.json());
