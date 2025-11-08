@@ -1,41 +1,142 @@
 <!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AnonForum</title>
-<link rel="stylesheet" href="/style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AnonForum</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #e6edf3;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #161b22;
+      padding: 10px 20px;
+      border-bottom: 1px solid #30363d;
+    }
+    h1 {
+      color: #58a6ff;
+    }
+    a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .button {
+      background-color: #238636;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #2ea043;
+    }
+    .container {
+      padding: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .forum-box {
+      background-color: #161b22;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #30363d;
+    }
+    textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      background: #0d1117;
+      color: white;
+      padding: 10px;
+      resize: none;
+    }
+    .feed {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column-reverse; /* nowe wiadomości na górze */
+    }
+    .post {
+      background: #0d1117;
+      padding: 12px;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .post strong {
+      color: #58a6ff;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>AnonForum</h1>
-  <nav id="authNav">
-    <a href="/login.html">Zaloguj się</a>
-    <a href="/register.html">Zarejestruj się</a>
-  </nav>
-  <div style="display:flex;gap:10px;align-items:center">
-    <span id="userDisplay" style="color:var(--accent);display:none"></span>
-    <button id="logoutBtn" class="button" style="display:none">Wyloguj</button>
-    <a id="adminLink" href="/admin.html" style="display:none;color:var(--accent)">Admin</a>
-  </div>
-</header>
-<main class="container">
-  <div class="forum-box">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2>Forum</h2>
-      <span id="timeNow" class="small"></span>
+  <header>
+    <h1>AnonForum</h1>
+    <nav id="authNav">
+      <a href="/login.html">Zaloguj się</a>
+      <a href="/register.html">Zarejestruj się</a>
+    </nav>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span id="userDisplay" style="color:#58a6ff;display:none"></span>
+      <button id="logoutBtn" class="button" style="display:none">Wyloguj</button>
+      <a id="adminLink" href="/admin.html" style="display:none;color:#58a6ff">Admin</a>
     </div>
+  </header>
 
-    <textarea id="postContent" placeholder="Napisz coś..." rows="3"></textarea>
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <button id="btnPost" class="button">Wyślij</button>
-      <button id="btnRefresh" class="button">Odśwież</button>
+  <main class="container">
+    <div class="forum-box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>Forum</h2>
+      </div>
+
+      <textarea id="postContent" placeholder="Napisz coś..." rows="3"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="btnPost" class="button">Wyślij</button>
+      </div>
+
+      <div id="feed" class="feed"></div>
     </div>
+  </main>
 
-    <div id="feed" class="feed"></div>
-  </div>
-</main>
+  <script>
+    // ---- Live Chat + Autoodświeżanie ----
+    async function loadPosts() {
+      const res = await fetch('/api/posts');
+      const posts = await res.json();
+      const feed = document.getElementById('feed');
+      feed.innerHTML = posts.map(p => `
+        <div class="post">
+          <strong>${p.username}</strong>: ${p.content}
+        </div>
+      `).join('');
+    }
 
-<script src="/app.js"></script>
+    document.getElementById('btnPost').addEventListener('click', async () => {
+      const content = document.getElementById('postContent').value.trim();
+      if (!content) return;
+      await fetch('/api/posts', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({content})
+      });
+      document.getElementById('postContent').value = '';
+      loadPosts();
+    });
+
+    // Odświeżanie co 3 sekundy
+    setInterval(loadPosts, 3000);
+
+    loadPosts();
+  </script>
 </body>
 </html>
