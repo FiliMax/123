@@ -1,19 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
-<head>
-  <meta charset="UTF-8">
-  <title>Rejestracja</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rejestracja</title><link rel="stylesheet" href="/style.css"></head>
 <body>
-  <div class="form-box">
+<main class="container">
+  <div class="forum-box">
     <h2>Rejestracja</h2>
-    <input id="regUser" placeholder="Nazwa użytkownika">
-    <input id="regPass" type="password" placeholder="Hasło">
-    <button id="registerBtn">Zarejestruj</button>
-    <p>Masz już konto? <a href="login.html">Zaloguj się</a></p>
+    <input id="r_username" placeholder="Nazwa użytkownika">
+    <input id="r_password" type="password" placeholder="Hasło">
+    <input id="r_email" placeholder="Email (opcjonalnie)">
+    <input id="r_phone" placeholder="Telefon (opcjonalnie)">
+    <button id="r_btn" class="button">Zarejestruj</button>
+    <p class="small">Po rejestracji otrzymasz kod weryfikacyjny (email lub SMS — demo).</p>
+    <div id="regMsg" class="small"></div>
   </div>
-
-  <script src="app.js"></script>
+</main>
+<script>
+document.getElementById('r_btn').onclick = async () => {
+  const u = document.getElementById('r_username').value.trim();
+  const p = document.getElementById('r_password').value.trim();
+  const e = document.getElementById('r_email').value.trim();
+  const ph = document.getElementById('r_phone').value.trim();
+  if(!u||!p||(!e && !ph)) { alert('Nazwa, hasło i email lub telefon wymagane'); return; }
+  const res = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p,email:e||null,phone:ph||null})});
+  const data = await res.json();
+  if(res.ok) {
+    alert('Zarejestrowano. Sprawdź email/sms na kod weryfikacyjny.');
+    location.href = '/login.html';
+  } else {
+    document.getElementById('regMsg').textContent = data.error || 'Błąd';
+  }
+};
+</script>
 </body>
 </html>

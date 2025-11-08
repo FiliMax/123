@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<main class="container">
+  <div class="forum-box">
+    <h2>Panel administratora</h2>
+    <h3>Użytkownicy</h3>
+    <div id="users"></div>
+    <h3>Posty</h3>
+    <div id="allposts"></div>
+  </div>
+</main>
+<script>
+async function loadAdmin() {
+  const ures = await fetch('/api/admin/users');
+  if(!ures.ok) { alert('Brak uprawnień'); location.href = '/'; return; }
+  const users = await ures.json();
+  document.getElementById('users').innerHTML = users.map(u => `
+    <div class="post">
+      <div style="display:flex;justify-content:space-between"><b>${u.username}</b><span class="small">${u.created_at}</span></div>
+      <div class="small">email:${u.email||'-'} phone:${u.phone||'-'} posts:${u.post_count}</div>
+      <div class="admin-controls"><button class="button" onclick="delUser(${u.id})">Usuń</button></div>
+    </div>
+  `).join('');
+  // posts
+  const pres = await fetch('/api/posts');
+  const posts = await pres.json();
+  document.getElementById('allposts').innerHTML = posts.map(p => `
+    <div class="post">
+      <div style="display:flex;justify-content:space-between"><b>${p.username}</b><span class="small">${p.created_at}</span></div>
+      <div>${p.content}</div>
+      <div class="admin-controls"><button class="button" onclick="delPost(${p.id})">Usuń post</button></div>
+    </div>
+  `).join('');
+}
+async function delUser(id){ if(!confirm('Usuń użytkownika?')) return; await fetch('/api/admin/users/'+id,{method:'DELETE'}); loadAdmin(); }
+async function delPost(id){ if(!confirm('Usuń post?')) return; await fetch('/api/posts/'+id,{method:'DELETE'}); loadAdmin(); }
+loadAdmin();
+</script>
+</body>
+</html>

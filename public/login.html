@@ -1,19 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Logowanie</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logowanie — AnonForum</title>
+<link rel="stylesheet" href="/style.css">
 </head>
-<body>
-  <div class="form-box">
-    <h2>Zaloguj się</h2>
-    <input id="loginUser" placeholder="Nazwa użytkownika">
-    <input id="loginPass" type="password" placeholder="Hasło">
-    <button id="loginBtn">Zaloguj</button>
-    <p>Nie masz konta? <a href="register.html">Zarejestruj się</a></p>
-  </div>
+<body class="auth-page">
+  <main class="auth-box">
+    <h1>Logowanie</h1>
 
-  <script src="app.js"></script>
+    <form id="loginForm">
+      <label for="username">Nazwa użytkownika / e-mail:</label>
+      <input type="text" id="username" required>
+
+      <label for="password">Hasło:</label>
+      <input type="password" id="password" required>
+
+      <button type="submit" class="button">Zaloguj</button>
+    </form>
+
+    <div style="margin-top:10px;text-align:center">
+      <a href="/register.html">Nie masz konta? Zarejestruj się</a><br>
+      <a href="/forgot.html" style="color:var(--accent)">Nie pamiętasz hasła?</a>
+    </div>
+  </main>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    window.location.href = '/';
+  } else {
+    alert(data.error || 'Błąd logowania');
+  }
+});
+</script>
 </body>
 </html>

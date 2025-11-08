@@ -1,32 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>AnonForum</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AnonForum</title>
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <header>
-    <h1>AnonForum</h1>
-    <nav id="navLinks">
-      <a href="login.html">Zaloguj się</a>
-      <a href="register.html">Zarejestruj się</a>
-    </nav>
-    <div id="userDisplay" class="hidden">
-      <span id="username"></span>
-      <button id="logoutBtn">Wyloguj</button>
-    </div>
-  </header>
-
-  <main>
-    <div class="forum-box">
+<header>
+  <h1>AnonForum</h1>
+  <nav id="authNav">
+    <a href="/login.html">Zaloguj się</a>
+    <a href="/register.html">Zarejestruj się</a>
+  </nav>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span id="userDisplay" style="color:var(--accent);display:none"></span>
+    <button id="logoutBtn" class="button" style="display:none">Wyloguj</button>
+    <a id="adminLink" href="/admin.html" style="display:none;color:var(--accent)">Admin</a>
+  </div>
+</header>
+<main class="container">
+  <div class="forum-box">
+    <div style="display:flex;justify-content:space-between;align-items:center">
       <h2>Forum</h2>
-      <div id="posts"></div>
-      <textarea id="postContent" placeholder="Napisz coś..."></textarea>
-      <button id="sendPost">Wyślij</button>
+      <span id="timeNow" class="small"></span>
     </div>
-  </main>
 
-  <script src="app.js"></script>
+    <textarea id="postContent" placeholder="Napisz coś..." rows="3"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="btnPost" class="button">Wyślij</button>
+      <button id="btnRefresh" class="button">Odśwież</button>
+    </div>
+
+    <div id="feed" class="feed"></div>
+  </div>
+</main>
+
+<script src="/app.js"></script>
 </body>
 </html>

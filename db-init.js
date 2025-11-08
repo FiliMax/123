@@ -2,15 +2,34 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data.sqlite');
 
 db.serialize(() => {
-  db.run('DROP TABLE IF EXISTS users');
-  db.run('DROP TABLE IF EXISTS posts');
+  console.log('🔧 Tworzenie bazy danych...');
 
-  db.run('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT)');
-  db.run('CREATE TABLE posts (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, content TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)');
+  // Tabela użytkowników
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT,
+    email TEXT,
+    phone TEXT,
+    role TEXT DEFAULT 'user',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
 
-  db.run('INSERT INTO users (username, password) VALUES (?, ?)', ['test', 'test123']);
+  // Tabela postów
+  db.run(`CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    content TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
 
-  console.log('Baza danych utworzona! Konto test/test123');
+  // Konto admina
+  db.run(
+    `INSERT OR IGNORE INTO users (username, password, email, phone, role)
+     VALUES ('admin', 'admin123', 'admin@example.com', '000000000', 'admin')`
+  );
+
+  console.log('✅ Baza danych gotowa, konto admina utworzone (login: admin / hasło: admin123)');
 });
 
 db.close();

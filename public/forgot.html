@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Przypomnienie hasła | AnonForum</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body { background-color: #0d1117; color: #e6edf3; font-family: Arial,sans-serif; }
+    .container { max-width:400px;margin:60px auto;padding:20px;background:#161b22;border-radius:8px;border:1px solid #30363d; }
+    input,button { width:100%;padding:10px;margin-top:10px;border-radius:6px;border:1px solid #30363d;background:#0d1117;color:white; }
+    button { background-color:#238636;cursor:pointer; }
+    button:hover { background-color:#2ea043; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Przypomnienie hasła</h2>
+    <p>Podaj swój adres e-mail, a wyślemy Ci kod weryfikacyjny do resetu hasła.</p>
+    <input type="email" id="email" placeholder="Twój e-mail">
+    <button id="resetBtn">Wyślij kod</button>
+    <p id="msg"></p>
+  </div>
+
+  <script>
+    document.getElementById('resetBtn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value.trim();
+      const res = await fetch('/api/forgot', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      document.getElementById('msg').innerText = data.message;
+    });
+  </script>
+</body>
+</html>
